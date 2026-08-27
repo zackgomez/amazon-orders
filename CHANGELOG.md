@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/amazon-orders/compare/4.4.7...HEAD)
 
+### Fixed
+
+- Items in a multi-item shipment are no longer dropped from the Order history page, where Amazon renders them as a thumbnail grid (`.yo-enhanced-flex-card`) or a carousel (`.yo-enhanced-card`) instead of an `.item-box`.
+
 ## [4.4.7](https://github.com/alexdlaird/amazon-orders/compare/4.4.6...4.4.7) - 2026-08-02
 
 ### Fixed
