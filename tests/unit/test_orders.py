@@ -1097,3 +1097,29 @@ class TestOrders(UnitTestCase):
         self.assertIn(f"timeFilter=year-{year}", request_url)
         self.assertIn("orderFilter=digital-orders", request_url)
         self.assertEqual(10, len(orders))
+
+    @responses.activate
+    def test_get_order_history_count_with_thousands_separator(self):
+        """
+        An account large enough for Amazon to group the count ("1,388 orders") must still be able to page
+        past the end of a window, rather than failing to read its own count.
+        """
+        # GIVEN
+        self.amazon_session.is_authenticated = True
+        year = 2018
+        start_index = 1390
+        with open(os.path.join(self.RESOURCES_DIR, "orders", "order-history-large-count.html"), "r",
+                  encoding="utf-8") as f:
+            resp = responses.add(
+                responses.GET,
+                f"{self.test_config.constants.ORDER_HISTORY_URL}?timeFilter=year-{year}&startIndex={start_index}",
+                body=f.read(),
+                status=200,
+            )
+
+        # WHEN
+        orders = self.amazon_orders.get_order_history(year=year, start_index=start_index)
+
+        # THEN
+        self.assertEqual(0, len(orders))
+        self.assertEqual(1, resp.call_count)
